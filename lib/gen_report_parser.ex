@@ -25,6 +25,14 @@ defmodule GenReport.Parser do
     |> Enum.map(&parse_line/1)
   end
 
+  def parse_many_files(file_names) do
+    file_names
+    |> Task.async_stream(&parse_file/1)
+    |> Enum.reduce([], fn {:ok, data}, acc ->
+      acc ++ data
+    end)
+  end
+
   defp parse_line(line) do
     [nome, horas, dia, mes, ano] =
       line

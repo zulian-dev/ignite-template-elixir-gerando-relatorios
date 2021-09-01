@@ -44,6 +44,16 @@ defmodule GenReport do
     |> Enum.reduce(report_acc(), &sum_values/2)
   end
 
+  def build_from_many do
+    {:error, "Insira uma lista de nomes de arquivos"}
+  end
+
+  def build_from_many(file_name) do
+    file_name
+    |> Parser.parse_many_files()
+    |> Enum.reduce(report_acc(), &sum_values/2)
+  end
+
   defp sum_values(row, report) do
     report
     |> sum_values_all_hours(row)
@@ -79,7 +89,7 @@ defmodule GenReport do
     %{report | "hours_per_year" => hours_per_year}
   end
 
-  def report_acc do
+  defp report_acc do
     available_months = enum_into(@available_months)
     available_years = enum_into(@available_years)
 
@@ -94,6 +104,6 @@ defmodule GenReport do
     }
   end
 
-  def enum_into(keys), do: enum_into(keys, 0)
+  defp enum_into(keys), do: enum_into(keys, 0)
   defp enum_into(keys, values), do: Enum.into(keys, %{}, &{&1, values})
 end
